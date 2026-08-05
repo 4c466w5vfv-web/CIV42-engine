@@ -1,3 +1,4 @@
+[readme.md](https://github.com/user-attachments/files/30743651/readme.md)
 # CIV42 — a decision engine that keeps score
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
@@ -108,6 +109,25 @@ CIV42 trademark. See [NOTICE](NOTICE) for the exact boundary.
 You may run, modify, fork and sell services built on this code. You may not
 call your fork CIV42 — Apache-2.0 grants no trademark rights (§6).
 
+## Beyond the code
+
+Running the engine gives you the structure. Two things it cannot give you:
+
+**A third party who timestamps your prediction.** Self-scored records convince
+nobody. Register yours at **[civ42.com/register](https://civ42.com/register)** —
+free, no account. The server stamps the time and freezes your resolution
+criteria at that moment; both then appear in the
+[public ledger](https://civ42.com/ledger) and get scored when the horizon
+arrives. Right or wrong, it stays.
+
+**Someone who stakes their own record on your decision.** If you'd rather not
+run it yourself, [civ42.com](https://civ42.com) sells one thing: a written
+review of one real decision, delivered in 48 hours, with the predictions
+registered under our name and a full refund if it tells you nothing new. The
+code is free; what you pay for is accountability. How that money is split —
+including the 10% donated to UNICEF — is published at
+[civ42.com/money](https://civ42.com/money).
+
 ## Contributing
 
 Sign your commits (`git commit -s`) — we use the
@@ -143,6 +163,12 @@ AI에나 붙여넣어 출력을 저장하면 그대로 돌아갑니다.
 특이한 점: **독립성을 주장하지 않고 측정합니다.** 한 모델로 여러 학문을
 돌리면 라벨만 다른 한 목소리가 되는데, 엔진은 그 상관계수를 재서 보고하고
 스스로의 확신을 낮춥니다. 포함된 예제에서 ρ=0.95가 측정되었습니다.
+
+엔진을 직접 돌리셨다면 그 예측을
+[civ42.com/register](https://civ42.com/register)에 **무료로 등록**하실 수
+있습니다 — 서버가 등록 시각을 찍고 판정 기준을 동결해 공개 대장에서 채점합니다.
+직접 돌리기보다 맡기고 싶으시면 [civ42.com](https://civ42.com)에서 서면 검토를
+48시간 안에 받으실 수 있습니다(예측은 저희 이름으로 등록됩니다).
 
 코드는 Apache-2.0, 방법론 문서는 CC BY 4.0입니다. 포크·수정·상업적 사용
 모두 자유지만 "CIV42"라는 이름은 상표이므로 포크에 쓰실 수 없습니다
