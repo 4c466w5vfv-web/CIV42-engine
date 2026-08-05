@@ -1,0 +1,338 @@
+{
+  "discipline": "behavioral_psychology",
+  "relevance": 0.75,
+  "rationale": "후기 0건 상태에서 구매는 위험 지각의 문제다. 환불 보증과 공개 채점은 위험 역전 장치지만, 낯선 판매자에 대한 초기 신뢰는 제3자 증거(사례)가 가장 강하게 만든다. 병행안은 그 증거를 2주 안에 제조하는 유일한 안이다. 단, 무료는 수혜자에게 '이 서비스의 참조가격=0'이라는 앵커를 남길 수 있어 통제가 필요하다.",
+  "facts": [
+    "공개된 사회적 증거(후기·사례)가 현재 0건이다",
+    "환불 보증과 공개 채점 약속이 페이지에 명시되어 있다"
+  ],
+  "inferences": [
+    "첫 구매의 최대 장벽은 가격이 아니라 '이 사람을 믿어도 되는가'다",
+    "초대제(선착·지명)는 무료여도 선별감을 만들어 참조가격 오염을 줄인다",
+    "판매 보류는 '아직 팔 자신이 없다'는 신호로 읽힐 위험이 있다"
+  ],
+  "unknowns": [
+    "무료 수혜자가 남길 사례의 설득력",
+    "희소성 문구의 실제 행동 효과"
+  ],
+  "mechanisms": [
+    {
+      "cause": "제3자 사례 확보",
+      "effect": "후속 방문자의 위험 지각 하락",
+      "direction": "+",
+      "strength": 0.7,
+      "confidence": 0.7,
+      "evidence_type": "empirical"
+    },
+    {
+      "cause": "무료 제공",
+      "effect": "참조가격 0 앵커 형성",
+      "direction": "-",
+      "strength": 0.5,
+      "confidence": 0.6,
+      "evidence_type": "empirical"
+    },
+    {
+      "cause": "환불 보증",
+      "effect": "첫 구매 손실 공포 완화",
+      "direction": "+",
+      "strength": 0.55,
+      "confidence": 0.65,
+      "evidence_type": "empirical"
+    }
+  ],
+  "assessments": [
+    {
+      "option_id": "PAID_ONLY",
+      "criterion": "demand",
+      "score_mean": 0.48,
+      "score_std": 0.12,
+      "confidence": 0.55,
+      "assumptions": [
+        "보증 문구가 읽힘"
+      ],
+      "direction_note": ""
+    },
+    {
+      "option_id": "PAID_ONLY",
+      "criterion": "feasibility",
+      "score_mean": 0.7,
+      "score_std": 0.08,
+      "confidence": 0.7,
+      "assumptions": [],
+      "direction_note": ""
+    },
+    {
+      "option_id": "PAID_ONLY",
+      "criterion": "cost_efficiency",
+      "score_mean": 0.68,
+      "score_std": 0.08,
+      "confidence": 0.6,
+      "assumptions": [],
+      "direction_note": "반전"
+    },
+    {
+      "option_id": "PAID_ONLY",
+      "criterion": "revenue_potential",
+      "score_mean": 0.58,
+      "score_std": 0.12,
+      "confidence": 0.55,
+      "assumptions": [],
+      "direction_note": ""
+    },
+    {
+      "option_id": "PAID_ONLY",
+      "criterion": "defensibility",
+      "score_mean": 0.5,
+      "score_std": 0.14,
+      "confidence": 0.55,
+      "assumptions": [],
+      "direction_note": ""
+    },
+    {
+      "option_id": "PAID_ONLY",
+      "criterion": "risk_resilience",
+      "score_mean": 0.48,
+      "score_std": 0.1,
+      "confidence": 0.6,
+      "assumptions": [],
+      "direction_note": "반전"
+    },
+    {
+      "option_id": "PAID_ONLY",
+      "criterion": "time_to_validation",
+      "score_mean": 0.66,
+      "score_std": 0.08,
+      "confidence": 0.65,
+      "assumptions": [],
+      "direction_note": "반전"
+    },
+    {
+      "option_id": "PAID_ONLY",
+      "criterion": "sustainability",
+      "score_mean": 0.52,
+      "score_std": 0.1,
+      "confidence": 0.55,
+      "assumptions": [],
+      "direction_note": ""
+    },
+    {
+      "option_id": "PAID_PLUS_INVITE",
+      "criterion": "demand",
+      "score_mean": 0.66,
+      "score_std": 0.12,
+      "confidence": 0.6,
+      "assumptions": [
+        "초대 5명이 실제 수락"
+      ],
+      "direction_note": ""
+    },
+    {
+      "option_id": "PAID_PLUS_INVITE",
+      "criterion": "feasibility",
+      "score_mean": 0.64,
+      "score_std": 0.09,
+      "confidence": 0.7,
+      "assumptions": [],
+      "direction_note": ""
+    },
+    {
+      "option_id": "PAID_PLUS_INVITE",
+      "criterion": "cost_efficiency",
+      "score_mean": 0.6,
+      "score_std": 0.1,
+      "confidence": 0.6,
+      "assumptions": [],
+      "direction_note": "반전"
+    },
+    {
+      "option_id": "PAID_PLUS_INVITE",
+      "criterion": "revenue_potential",
+      "score_mean": 0.6,
+      "score_std": 0.12,
+      "confidence": 0.6,
+      "assumptions": [],
+      "direction_note": ""
+    },
+    {
+      "option_id": "PAID_PLUS_INVITE",
+      "criterion": "defensibility",
+      "score_mean": 0.56,
+      "score_std": 0.13,
+      "confidence": 0.55,
+      "assumptions": [],
+      "direction_note": ""
+    },
+    {
+      "option_id": "PAID_PLUS_INVITE",
+      "criterion": "risk_resilience",
+      "score_mean": 0.52,
+      "score_std": 0.1,
+      "confidence": 0.6,
+      "assumptions": [],
+      "direction_note": "반전"
+    },
+    {
+      "option_id": "PAID_PLUS_INVITE",
+      "criterion": "time_to_validation",
+      "score_mean": 0.74,
+      "score_std": 0.08,
+      "confidence": 0.7,
+      "assumptions": [],
+      "direction_note": "반전"
+    },
+    {
+      "option_id": "PAID_PLUS_INVITE",
+      "criterion": "sustainability",
+      "score_mean": 0.62,
+      "score_std": 0.1,
+      "confidence": 0.6,
+      "assumptions": [],
+      "direction_note": ""
+    },
+    {
+      "option_id": "AUDIENCE_FIRST",
+      "criterion": "demand",
+      "score_mean": 0.5,
+      "score_std": 0.13,
+      "confidence": 0.55,
+      "assumptions": [],
+      "direction_note": ""
+    },
+    {
+      "option_id": "AUDIENCE_FIRST",
+      "criterion": "feasibility",
+      "score_mean": 0.78,
+      "score_std": 0.07,
+      "confidence": 0.75,
+      "assumptions": [],
+      "direction_note": ""
+    },
+    {
+      "option_id": "AUDIENCE_FIRST",
+      "criterion": "cost_efficiency",
+      "score_mean": 0.64,
+      "score_std": 0.09,
+      "confidence": 0.6,
+      "assumptions": [],
+      "direction_note": "반전"
+    },
+    {
+      "option_id": "AUDIENCE_FIRST",
+      "criterion": "revenue_potential",
+      "score_mean": 0.34,
+      "score_std": 0.12,
+      "confidence": 0.55,
+      "assumptions": [],
+      "direction_note": ""
+    },
+    {
+      "option_id": "AUDIENCE_FIRST",
+      "criterion": "defensibility",
+      "score_mean": 0.58,
+      "score_std": 0.14,
+      "confidence": 0.55,
+      "assumptions": [],
+      "direction_note": ""
+    },
+    {
+      "option_id": "AUDIENCE_FIRST",
+      "criterion": "risk_resilience",
+      "score_mean": 0.64,
+      "score_std": 0.09,
+      "confidence": 0.6,
+      "assumptions": [],
+      "direction_note": "반전"
+    },
+    {
+      "option_id": "AUDIENCE_FIRST",
+      "criterion": "time_to_validation",
+      "score_mean": 0.42,
+      "score_std": 0.1,
+      "confidence": 0.6,
+      "assumptions": [],
+      "direction_note": "반전"
+    },
+    {
+      "option_id": "AUDIENCE_FIRST",
+      "criterion": "sustainability",
+      "score_mean": 0.56,
+      "score_std": 0.11,
+      "confidence": 0.55,
+      "assumptions": [],
+      "direction_note": ""
+    },
+    {
+      "option_id": "NO_INTERVENTION",
+      "criterion": "demand",
+      "score_mean": 0.26,
+      "score_std": 0.1,
+      "confidence": 0.65,
+      "assumptions": [],
+      "direction_note": ""
+    },
+    {
+      "option_id": "NO_INTERVENTION",
+      "criterion": "feasibility",
+      "score_mean": 0.9,
+      "score_std": 0.05,
+      "confidence": 0.85,
+      "assumptions": [],
+      "direction_note": ""
+    },
+    {
+      "option_id": "NO_INTERVENTION",
+      "criterion": "cost_efficiency",
+      "score_mean": 0.82,
+      "score_std": 0.06,
+      "confidence": 0.75,
+      "assumptions": [],
+      "direction_note": "반전"
+    },
+    {
+      "option_id": "NO_INTERVENTION",
+      "criterion": "revenue_potential",
+      "score_mean": 0.12,
+      "score_std": 0.08,
+      "confidence": 0.75,
+      "assumptions": [],
+      "direction_note": ""
+    },
+    {
+      "option_id": "NO_INTERVENTION",
+      "criterion": "defensibility",
+      "score_mean": 0.2,
+      "score_std": 0.1,
+      "confidence": 0.6,
+      "assumptions": [],
+      "direction_note": ""
+    },
+    {
+      "option_id": "NO_INTERVENTION",
+      "criterion": "risk_resilience",
+      "score_mean": 0.66,
+      "score_std": 0.08,
+      "confidence": 0.65,
+      "assumptions": [],
+      "direction_note": "반전"
+    },
+    {
+      "option_id": "NO_INTERVENTION",
+      "criterion": "time_to_validation",
+      "score_mean": 0.14,
+      "score_std": 0.08,
+      "confidence": 0.65,
+      "assumptions": [],
+      "direction_note": "반전"
+    },
+    {
+      "option_id": "NO_INTERVENTION",
+      "criterion": "sustainability",
+      "score_mean": 0.26,
+      "score_std": 0.1,
+      "confidence": 0.6,
+      "assumptions": [],
+      "direction_note": ""
+    }
+  ]
+}

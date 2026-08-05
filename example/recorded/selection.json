@@ -1,0 +1,29 @@
+{
+  "selected": [
+    {
+      "discipline": "economics",
+      "relevance": 0.85,
+      "why": "가격 신호·지불의사 검증·기회비용이 결정의 축이다. ₩150k 가격이 수요를 거르는 메커니즘 자체가 경제학의 대상."
+    },
+    {
+      "discipline": "behavioral_psychology",
+      "relevance": 0.75,
+      "why": "후기 0건 상태의 신뢰 형성, 무료가 만드는 앵커링·기대 형성, 희소성 (주 5건)의 행동 효과가 전환을 좌우한다."
+    },
+    {
+      "discipline": "statistics_data",
+      "relevance": 0.7,
+      "why": "2주·소표본에서 무엇이 '검증됐다'고 말할 수 있는지 — 표본 크기와 신호/잡음 구분이 세 옵션의 검증 속도 평가를 결정한다."
+    }
+  ],
+  "rejected_examples": [
+    {
+      "discipline": "law_regulation",
+      "why_not": "통신판매 면제·현금영수증 등 법적 전제는 이미 정리되어 이 결정의 변별 요인이 아니다."
+    },
+    {
+      "discipline": "engineering_software",
+      "why_not": "배송은 수동 컨시어지로 확정되어 기술 아키텍처가 옵션 간 차이를 만들지 않는다."
+    }
+  ]
+}

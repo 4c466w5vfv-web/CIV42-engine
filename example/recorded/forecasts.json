@@ -1,0 +1,87 @@
+{
+  "forecasts": [
+    {
+      "option_id": "PAID_ONLY",
+      "predictions": [
+        {
+          "metric": "유료 검토 결제 건수",
+          "prediction": "2주 내 유료 결제 1건 이상 발생 확률은 낮다(문의는 있어도 결제 전환이 후기 0건 장벽에 막힌다).",
+          "probability": 0.25,
+          "horizon_months": 1,
+          "falsified_if": "14일 내 결제 1건 이상 발생"
+        },
+        {
+          "metric": "진성 문의 수",
+          "prediction": "가격 공개로 문의의 질은 높다 — 14일 내 진성 문의(결정 내용 포함) 2건 이상.",
+          "probability": 0.45,
+          "horizon_months": 1,
+          "falsified_if": "진성 문의가 0~1건"
+        }
+      ]
+    },
+    {
+      "option_id": "PAID_PLUS_INVITE",
+      "predictions": [
+        {
+          "metric": "완료된 검토 사례 수",
+          "prediction": "초대 5명 중 3명 이상이 수락해 14일 내 완료 사례 3건 이상 확보.",
+          "probability": 0.6,
+          "horizon_months": 1,
+          "falsified_if": "완료 사례가 2건 이하"
+        },
+        {
+          "metric": "유료 결제 건수",
+          "prediction": "사례 확보 효과가 2주 안에 유료 결제로 이어질 확률은 제한적 — 1건 이상 확률 0.3.",
+          "probability": 0.3,
+          "horizon_months": 1,
+          "falsified_if": "14일 내 결제 1건 이상 발생하면 참"
+        },
+        {
+          "metric": "90일 유료 전환",
+          "prediction": "확보 사례를 근거로 90일 내 유료 결제 누적 3건 이상.",
+          "probability": 0.45,
+          "horizon_months": 3,
+          "falsified_if": "90일 누적 결제 2건 이하"
+        }
+      ]
+    },
+    {
+      "option_id": "AUDIENCE_FIRST",
+      "predictions": [
+        {
+          "metric": "뉴스레터 구독자",
+          "prediction": "2주 집중 연재로 구독자 50명 이상 확보.",
+          "probability": 0.35,
+          "horizon_months": 1,
+          "falsified_if": "14일 구독자 50명 미만"
+        },
+        {
+          "metric": "유료 결제 건수",
+          "prediction": "판매 보류로 14일 결제 0건.",
+          "probability": 0.9,
+          "horizon_months": 1,
+          "falsified_if": "결제 1건 이상 발생"
+        }
+      ]
+    },
+    {
+      "option_id": "NO_INTERVENTION",
+      "predictions": [
+        {
+          "metric": "유료 결제 건수",
+          "prediction": "아무 발행·판매 행동 없이 결제 0건.",
+          "probability": 0.95,
+          "horizon_months": 1,
+          "falsified_if": "결제 1건 이상 발생"
+        },
+        {
+          "metric": "상태 변화",
+          "prediction": "42축 상태 관측치가 갱신되지 않아 학습 데이터 0.",
+          "probability": 0.9,
+          "horizon_months": 1,
+          "falsified_if": "새 관측 기록 발생"
+        }
+      ]
+    }
+  ]
+}

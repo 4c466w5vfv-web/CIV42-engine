@@ -1,0 +1,31 @@
+CIV42 (ARK-42 Decision Engine)
+Copyright 2026 시브사십이(CIV42) — 대표 엄정호
+
+This product includes software developed by CIV42 (https://civ42.com).
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+WHAT THIS LICENSE DOES AND DOES NOT COVER
+-----------------------------------------
+Covered (Apache-2.0, free for any use including commercial):
+  - the decision engine: prompts, ontology and validation, score tensor,
+    Monte Carlo simulation, forecasting, report rendering, CLI
+  - the prompt kit and its generator (docs/PROMPT_KIT.md, tools/)
+  - tests
+
+Documentation and methodology text (docs/, the Methods Paper registered on
+OSF) is licensed CC BY 4.0 — free to use with attribution.
+
+NOT covered by this license, and NOT distributed here:
+  - "CIV42" and the CIV42 logo are trademarks of 시브사십이. Apache-2.0
+    grants no trademark rights (see LICENSE section 6). You may use and
+    fork this software; you may not present your fork as CIV42, nor use
+    the name for certification, training, or advisory services.
+  - Client decision data, run artifacts, and the 42-axis state histories
+    held by the hosted service.
+  - Reliability weights learned from resolved predictions.
+  - The public prediction ledger's underlying records (the aggregate
+    scoreboard is published at https://civ42.com/ledger).
+
+Running this engine yourself is fully permitted and encouraged. The hosted
+service at civ42.com sells convenience, accountability, and a scored track
+record — not access to this code.
