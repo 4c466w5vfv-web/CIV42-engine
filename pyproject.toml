@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "civ42"
+version = "1.0.0"
+description = "A decision engine that registers falsifiable predictions and publishes its own accuracy"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+authors = [{ name = "CIV42" }]
+keywords = [
+  "decision-making", "decision-analysis", "monte-carlo", "forecasting",
+  "calibration", "brier-score", "llm", "ontology",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Financial and Insurance Industry",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+# 엔진만의 의존성. 웹 계층(starlette/uvicorn)은 이 저장소에 없다 —
+# ark42/paths.py 로 엔진→웹 결합을 끊었기 때문에 엔진은 단독으로 돈다.
+dependencies = [
+  "numpy>=2.0",
+  "scipy>=1.11",
+  "pydantic>=2.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.urls]
+Homepage = "https://civ42.com"
+"Prediction ledger" = "https://civ42.com/ledger"
+"Open books" = "https://civ42.com/money"
+
+[project.scripts]
+civ42 = "ark42.__main__:main"
+
+[tool.setuptools]
+packages = ["ark42"]
