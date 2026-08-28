@@ -1,0 +1,36 @@
+name: MTF Cross-Asset Parallel v1.3
+on:
+  push:
+    branches: [research/mtf-crossasset-v1-3]
+  workflow_dispatch:
+jobs:
+  backtest:
+    strategy:
+      fail-fast: false
+      matrix:
+        asset: [NQ_PROXY, SP500_PROXY, GOLD, SILVER, WTI, COPPER, NATGAS, USTBOND]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: |
+          pip install pandas numpy requests yfinance tabulate
+          npm install dukascopy-cli
+      - name: Run ${{ matrix.asset }}
+        env:
+          ASSET: ${{ matrix.asset }}
+        run: python research/mtf_crossasset_single.py | tee ${{ matrix.asset }}.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mtf-v13-${{ matrix.asset }}
+          path: |
+            research/results/mtf_v13_parallel/${{ matrix.asset }}/
+            ${{ matrix.asset }}.txt
+          retention-days: 30
