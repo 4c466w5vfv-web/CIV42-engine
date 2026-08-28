@@ -1,4 +1,4 @@
-name: MTF HTF Zone LTF Confirm v1.6.1 Causal Fix
+name: MTF Convex Trend Exit v1.7
 
 on:
   push:
@@ -7,6 +7,7 @@ on:
     paths:
       - research/mtf_htf_zone_ltf_confirm_v16.py
       - research/mtf_htf_zone_ltf_confirm_v161.py
+      - research/mtf_exit_engine_v17.py
       - .github/workflows/mtf-htf-zone-ltf-confirm-v16.yml
   workflow_dispatch:
 
@@ -30,14 +31,14 @@ jobs:
         run: |
           pip install pandas numpy requests yfinance tabulate
           npm install dukascopy-cli
-      - name: Run causal-fixed ${{ matrix.asset }}
+      - name: Run convex-exit comparison ${{ matrix.asset }}
         env:
           ASSET: ${{ matrix.asset }}
-        run: python research/mtf_htf_zone_ltf_confirm_v161.py | tee ${{ matrix.asset }}-v161.txt
+        run: python research/mtf_exit_engine_v17.py | tee ${{ matrix.asset }}-v17.txt
       - uses: actions/upload-artifact@v4
         with:
-          name: mtf-v161-${{ matrix.asset }}
+          name: mtf-v17-${{ matrix.asset }}
           path: |
-            research/results/mtf_v161/${{ matrix.asset }}/
-            ${{ matrix.asset }}-v161.txt
+            research/results/mtf_v17_exit/${{ matrix.asset }}/
+            ${{ matrix.asset }}-v17.txt
           retention-days: 30
