@@ -1,0 +1,31 @@
+name: MTF Cross-Asset v1.3
+on:
+  push:
+    branches: [research/mtf-crossasset-v1-3]
+  workflow_dispatch:
+jobs:
+  backtest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install dependencies
+        run: |
+          pip install pandas numpy requests yfinance tabulate
+          npm install dukascopy-cli
+      - name: Run cross-asset causal backtest
+        run: python research/mtf_crossasset_v13.py | tee mtf_crossasset_v13_console.txt
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: mtf-crossasset-v13-results
+          path: |
+            research/results/mtf_v13/
+            mtf_crossasset_v13_console.txt
+          retention-days: 30
