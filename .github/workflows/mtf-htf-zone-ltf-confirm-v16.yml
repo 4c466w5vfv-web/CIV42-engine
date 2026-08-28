@@ -40,3 +40,5 @@ jobs:
             research/results/mtf_v16/${{ matrix.asset }}/
             ${{ matrix.asset }}-v16.txt
           retention-days: 30
+
+# retrigger: 2026-08-29
