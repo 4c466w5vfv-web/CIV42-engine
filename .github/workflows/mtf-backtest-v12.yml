@@ -1,0 +1,34 @@
+name: MTF Backtest v1.2
+
+on:
+  push:
+    branches:
+      - research/mtf-backtest-v1-2
+    paths:
+      - 'research/mtf_backtest_v12.py'
+      - '.github/workflows/mtf-backtest-v12.yml'
+  workflow_dispatch:
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install pandas numpy requests yfinance tabulate
+      - name: Run causal MTF backtest
+        run: python research/mtf_backtest_v12.py | tee mtf_backtest_console.txt
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: mtf-backtest-v12-results
+          path: |
+            research/results/mtf_v12/
+            mtf_backtest_console.txt
+          retention-days: 30
