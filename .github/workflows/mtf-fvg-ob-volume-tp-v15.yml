@@ -1,0 +1,43 @@
+name: MTF FVG OB Volume TP v1.5
+
+on:
+  push:
+    branches:
+      - research/mtf-crossasset-v1-3
+    paths:
+      - research/mtf_fvg_ob_volume_tp_v15.py
+      - .github/workflows/mtf-fvg-ob-volume-tp-v15.yml
+  workflow_dispatch:
+
+jobs:
+  backtest:
+    strategy:
+      fail-fast: false
+      matrix:
+        asset: [ETH, BTC, GOLD, NQ_PROXY, SP500_PROXY, NATGAS, USTBOND, WTI, COPPER, SILVER]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install dependencies
+        run: |
+          pip install pandas numpy requests yfinance tabulate
+          npm install dukascopy-cli
+      - name: Run ${{ matrix.asset }}
+        env:
+          ASSET: ${{ matrix.asset }}
+        run: python research/mtf_fvg_ob_volume_tp_v15.py | tee ${{ matrix.asset }}-v15.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mtf-v15-${{ matrix.asset }}
+          path: |
+            research/results/mtf_v15/${{ matrix.asset }}/
+            research/results/mtf_v15/${{ matrix.asset }}_*.csv
+            ${{ matrix.asset }}-v15.txt
+          retention-days: 30
