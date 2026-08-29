@@ -1,0 +1,43 @@
+name: Diagonal Structure Strategy v1.9
+
+on:
+  push:
+    branches: [research/mtf-crossasset-v1-3]
+    paths:
+      - 'research/diagonal_structure_v19.py'
+      - 'research/mtf_exit_engine_v17.py'
+      - 'research/mtf_htf_zone_ltf_confirm_v16.py'
+      - 'research/mtf_htf_zone_ltf_confirm_v161.py'
+      - '.github/workflows/diagonal-structure-v19.yml'
+  workflow_dispatch:
+
+jobs:
+  backtest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    strategy:
+      fail-fast: false
+      matrix:
+        asset: [ETH, BTC, GOLD, NQ_PROXY, SP500_PROXY, NATGAS, USTBOND, WTI, COPPER, SILVER]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: pip install pandas numpy requests yfinance tabulate
+      - run: npm install -g dukascopy-node
+      - name: Run diagonal v1.9
+        env:
+          ASSET: ${{ matrix.asset }}
+        run: python research/diagonal_structure_v19.py | tee ${{ matrix.asset }}-diagonal-v19.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: diagonal-v19-${{ matrix.asset }}
+          path: |
+            research/results/diagonal_v19/${{ matrix.asset }}/
+            ${{ matrix.asset }}-diagonal-v19.txt
+          retention-days: 30
