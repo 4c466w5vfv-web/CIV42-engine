@@ -1,0 +1,33 @@
+name: Inflection Effort Result v2.3
+on:
+  push:
+    branches: [research/mtf-crossasset-v1-3]
+    paths: ['research/inflection_effort_result_v23.py','.github/workflows/inflection-effort-result-v23.yml']
+  workflow_dispatch:
+jobs:
+  backtest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    strategy:
+      fail-fast: false
+      matrix:
+        asset: [NQ_PROXY, SP500_PROXY, WTI, GOLD, NATGAS]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - run: pip install pandas numpy requests yfinance tabulate
+      - run: npm install -g dukascopy-node
+      - name: Run v2.3
+        env: {ASSET: '${{ matrix.asset }}'}
+        run: python research/inflection_effort_result_v23.py | tee ${{ matrix.asset }}-v23.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: inflection-effort-result-v23-${{ matrix.asset }}
+          path: |
+            research/results/inflection_effort_result_v23/${{ matrix.asset }}/
+            ${{ matrix.asset }}-v23.txt
+          retention-days: 30
