@@ -1,0 +1,33 @@
+name: Volume Zone Diagonal v2.2
+on:
+  push:
+    branches: [research/mtf-crossasset-v1-3]
+    paths: ['research/volume_zone_diagonal_v22.py','.github/workflows/volume-zone-diagonal-v22.yml']
+  workflow_dispatch:
+jobs:
+  backtest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    strategy:
+      fail-fast: false
+      matrix:
+        asset: [ETH, BTC, GOLD, NQ_PROXY, SP500_PROXY, NATGAS, USTBOND, WTI, COPPER, SILVER]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - run: pip install pandas numpy requests yfinance tabulate
+      - run: npm install -g dukascopy-node
+      - name: Run v2.2
+        env: {ASSET: '${{ matrix.asset }}'}
+        run: python research/volume_zone_diagonal_v22.py | tee ${{ matrix.asset }}-v22.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: volume-zone-diagonal-v22-${{ matrix.asset }}
+          path: |
+            research/results/volume_zone_diagonal_v22/${{ matrix.asset }}/
+            ${{ matrix.asset }}-v22.txt
+          retention-days: 30
