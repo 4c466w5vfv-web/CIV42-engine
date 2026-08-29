@@ -1,0 +1,32 @@
+name: Risk Scaling Anti-Martingale v2.4
+on:
+  workflow_dispatch:
+  push:
+    branches: [research/mtf-crossasset-v1-3]
+    paths:
+      - 'research/risk_scaling_antimartingale_v24.py'
+      - '.github/workflows/risk-scaling-antimartingale-v24.yml'
+jobs:
+  backtest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - run: pip install pandas numpy requests yfinance tabulate
+      - run: npm install -g dukascopy-node
+      - name: Run risk scaling comparison
+        env:
+          ASSETS: NQ_PROXY,SP500_PROXY,WTI,GOLD,NATGAS
+        run: python research/risk_scaling_antimartingale_v24.py | tee risk-scaling-v24.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: risk-scaling-antimartingale-v24
+          path: |
+            research/results/risk_scaling_antimartingale_v24/
+            risk-scaling-v24.txt
+          retention-days: 30
