@@ -1,0 +1,33 @@
+name: Weekly Daily Diagonal LTF Stop v2.1
+on:
+  push:
+    branches: [research/mtf-crossasset-v1-3]
+    paths: ['research/weekly_daily_diagonal_v21.py','.github/workflows/weekly-daily-diagonal-v21.yml']
+  workflow_dispatch:
+jobs:
+  backtest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    strategy:
+      fail-fast: false
+      matrix:
+        asset: [ETH, BTC, GOLD, NQ_PROXY, SP500_PROXY, NATGAS, USTBOND, WTI, COPPER, SILVER]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - run: pip install pandas numpy requests yfinance tabulate
+      - run: npm install -g dukascopy-node
+      - name: Run v2.1
+        env: {ASSET: '${{ matrix.asset }}'}
+        run: python research/weekly_daily_diagonal_v21.py | tee ${{ matrix.asset }}-v21.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: weekly-daily-diagonal-v21-${{ matrix.asset }}
+          path: |
+            research/results/weekly_daily_diagonal_v21/${{ matrix.asset }}/
+            ${{ matrix.asset }}-v21.txt
+          retention-days: 30
