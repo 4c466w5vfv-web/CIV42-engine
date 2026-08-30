@@ -1,0 +1,33 @@
+name: Prop Risk Stress v2.6
+on:
+  workflow_dispatch:
+  push:
+    branches: [research/mtf-crossasset-v1-3]
+    paths:
+      - 'research/prop_risk_stress_v26.py'
+      - '.github/workflows/prop-risk-stress-v26.yml'
+jobs:
+  stress:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - run: pip install pandas numpy requests yfinance tabulate
+      - run: npm install -g dukascopy-node
+      - name: Rebuild frozen v2.4 sequence
+        env:
+          ASSETS: NQ_PROXY,SP500_PROXY,WTI,GOLD,NATGAS
+        run: python research/risk_scaling_antimartingale_v24.py
+      - name: Run conservative prop stress
+        run: python research/prop_risk_stress_v26.py | tee prop-risk-stress-v26.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prop-risk-stress-v26
+          path: |
+            research/results/prop_risk_stress_v26/
+            prop-risk-stress-v26.txt
+          retention-days: 30
