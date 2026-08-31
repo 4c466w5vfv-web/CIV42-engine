@@ -1,0 +1,36 @@
+name: Edge Concentration Monte Carlo v3.0
+
+on:
+  push:
+    branches: [research/mtf-crossasset-v1-3]
+    paths:
+      - 'research/edge_concentration_mc_v30.py'
+      - '.github/workflows/edge-concentration-mc-v30.yml'
+  workflow_dispatch:
+
+jobs:
+  monte-carlo:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pandas numpy
+      - name: Download GOLD and SILVER v2.8 artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p artifacts_v28
+          gh run download 33392019874 -n session-fvg-h1-m5-v28-GOLD -D artifacts_v28/gold
+          gh run download 33392019874 -n session-fvg-h1-m5-v28-SILVER -D artifacts_v28/silver
+      - name: Run edge concentration stress
+        run: |
+          python research/edge_concentration_mc_v30.py | tee edge-concentration-mc-v30.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: edge-concentration-mc-v30
+          path: |
+            research/results/edge_concentration_mc_v30/
+            edge-concentration-mc-v30.txt
+          retention-days: 30
