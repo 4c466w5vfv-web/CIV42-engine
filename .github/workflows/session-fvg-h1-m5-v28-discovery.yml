@@ -1,0 +1,40 @@
+name: Session FVG H1 M5 v2.8 Discovery
+on:
+  workflow_dispatch:
+  push:
+    branches: [research/mtf-crossasset-v1-3]
+    paths:
+      - 'research/session_fvg_h1_m5_v28.py'
+      - '.github/workflows/session-fvg-h1-m5-v28-discovery.yml'
+
+jobs:
+  backtest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        asset: [EURUSD, GBPUSD, USDJPY, EURJPY, GBPJPY, AUDUSD, EURGBP, GOLD, SILVER, NQ_PROXY, SP500_PROXY, WTI, BRENT, NATGAS, COPPER, USTBOND]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - run: pip install pandas numpy requests yfinance tabulate
+      - run: npm install -g dukascopy-node
+      - name: Run ${{ matrix.asset }}
+        env:
+          ASSET: ${{ matrix.asset }}
+        shell: bash
+        run: |
+          set -o pipefail
+          python research/session_fvg_h1_m5_v28.py | tee session-fvg-h1-m5-v28-${{ matrix.asset }}.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: session-fvg-h1-m5-v28-${{ matrix.asset }}
+          path: |
+            research/results/session_fvg_h1_m5_v28/${{ matrix.asset }}/
+            session-fvg-h1-m5-v28-${{ matrix.asset }}.txt
+          retention-days: 30
