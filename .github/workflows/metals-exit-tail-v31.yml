@@ -1,0 +1,34 @@
+name: Metals Exit Right-Tail v3.1
+on:
+  workflow_dispatch:
+  push:
+    branches: [research/mtf-crossasset-v1-3]
+    paths:
+      - 'research/metals_exit_tail_v31.py'
+      - '.github/workflows/metals-exit-tail-v31.yml'
+
+jobs:
+  backtest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - run: pip install pandas numpy requests yfinance tabulate
+      - run: npm install -g dukascopy-node
+      - name: Run metals exit comparison
+        shell: bash
+        run: |
+          set -o pipefail
+          python research/metals_exit_tail_v31.py | tee metals-exit-tail-v31.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: metals-exit-tail-v31
+          path: |
+            research/results/metals_exit_tail_v31/
+            metals-exit-tail-v31.txt
+          retention-days: 30
