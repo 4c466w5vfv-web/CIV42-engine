@@ -1,0 +1,37 @@
+name: Prop Portfolio Monte Carlo v2.9
+on:
+  push:
+    branches: [research/mtf-crossasset-v1-3]
+    paths:
+      - 'research/prop_portfolio_mc_v29.py'
+      - '.github/workflows/prop-portfolio-mc-v29.yml'
+  workflow_dispatch:
+
+jobs:
+  monte-carlo:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install pandas numpy
+      - name: Download v2.8 artifacts from discovery run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p artifacts_v28
+          cd artifacts_v28
+          gh run download 33392019874 -R ${{ github.repository }} --pattern 'session-fvg-h1-m5-v28-*'
+      - name: Run portfolio stress and Monte Carlo
+        run: python research/prop_portfolio_mc_v29.py | tee prop-portfolio-mc-v29.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prop-portfolio-mc-v29
+          path: |
+            research/results/prop_portfolio_mc_v29/
+            prop-portfolio-mc-v29.txt
+          retention-days: 30
