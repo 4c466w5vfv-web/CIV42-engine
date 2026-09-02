@@ -1,0 +1,31 @@
+name: BigView MA 10Y Proxy Backtest v3.2
+
+on:
+  push:
+    branches:
+      - research/mtf-crossasset-v1-3
+    paths:
+      - research/bigview_ma_10y_v32.py
+      - .github/workflows/bigview-ma-10y-v32.yml
+  workflow_dispatch:
+
+jobs:
+  backtest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install pandas numpy yfinance
+      - name: Run 10Y backtest
+        run: python research/bigview_ma_10y_v32.py | tee bigview-ma-v32.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bigview-ma-v32-results
+          path: |
+            research/results/bigview_ma_v32/
+            bigview-ma-v32.txt
+          retention-days: 30
