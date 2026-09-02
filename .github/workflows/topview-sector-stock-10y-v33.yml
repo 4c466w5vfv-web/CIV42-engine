@@ -1,0 +1,31 @@
+name: TopView Sector Stock 10Y Backtest v3.3
+
+on:
+  push:
+    branches:
+      - research/mtf-crossasset-v1-3
+    paths:
+      - research/topview_sector_stock_10y_v33.py
+      - .github/workflows/topview-sector-stock-10y-v33.yml
+  workflow_dispatch:
+
+jobs:
+  backtest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install pandas numpy yfinance
+      - name: Run TopView sector-stock backtest
+        run: python research/topview_sector_stock_10y_v33.py | tee topview-sector-stock-v33.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: topview-sector-stock-v33-results
+          path: |
+            research/results/topview_sector_stock_v33/
+            topview-sector-stock-v33.txt
+          retention-days: 30
