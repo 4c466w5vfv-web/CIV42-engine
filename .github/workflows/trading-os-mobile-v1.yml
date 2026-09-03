@@ -1,0 +1,21 @@
+name: Trading OS Mobile v1
+
+on:
+  push:
+    branches:
+      - research/mtf-crossasset-v1-3
+    paths:
+      - 'trading_os_mobile/**'
+      - '.github/workflows/trading-os-mobile-v1.yml'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test Trading OS risk engine
+        run: node trading_os_mobile/test-risk-engine.mjs
