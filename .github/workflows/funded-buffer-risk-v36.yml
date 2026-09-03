@@ -1,0 +1,30 @@
+name: Funded Buffer Risk v3.6
+
+on:
+  push:
+    branches:
+      - research/mtf-crossasset-v1-3
+    paths:
+      - 'research/funded_buffer_risk_v36.py'
+      - '.github/workflows/funded-buffer-risk-v36.yml'
+  workflow_dispatch:
+
+jobs:
+  simulate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install pandas numpy yfinance
+      - name: Run funded buffer risk v3.6
+        run: python research/funded_buffer_risk_v36.py | tee funded-buffer-risk-v36.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: funded-buffer-risk-v36-results
+          path: |
+            research/results/funded_buffer_risk_v36/
+            funded-buffer-risk-v36.txt
+          retention-days: 30
