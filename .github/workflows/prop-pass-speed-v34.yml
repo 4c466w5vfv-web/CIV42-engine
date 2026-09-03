@@ -1,0 +1,32 @@
+name: Prop Pass Speed Consistency v3.4
+
+on:
+  push:
+    branches:
+      - research/mtf-crossasset-v1-3
+    paths:
+      - 'research/prop_pass_speed_v34.py'
+      - 'research/topview_sector_stock_10y_v33.py'
+      - '.github/workflows/prop-pass-speed-v34.yml'
+  workflow_dispatch:
+
+jobs:
+  backtest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install pandas numpy yfinance
+      - name: Run prop pass-speed backtest
+        run: python research/prop_pass_speed_v34.py | tee prop-pass-speed-v34.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prop-pass-speed-v34-results
+          path: |
+            research/results/prop_pass_speed_v34/
+            prop-pass-speed-v34.txt
+          retention-days: 30
