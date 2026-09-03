@@ -77,33 +77,25 @@ def row_for(s: str, d: pd.DataFrame) -> dict | None:
     if not np.isfinite(atr) or atr <= 0:
         return None
 
-    # BigView strength: medium-term direction and trend structure.
     trend_up = px > float(x.sma50) > float(x.sma200)
     trend_dn = px < float(x.sma50) < float(x.sma200)
     direction = 1 if trend_up else (-1 if trend_dn else 0)
 
     mom = 0.45 * float(x.ret48h) + 0.35 * float(x.ret5d) + 0.20 * float(x.ret10h)
     strength = direction * mom if direction != 0 else 0.0
-
-    # Short-term pullback measured against medium-term trend.
     ext_ema_atr = (px - float(x.ema20)) / atr
     dist_sma50_atr = (px - float(x.sma50)) / atr
-    recent = d.iloc[-12:]  # ~6h
+    recent = d.iloc[-12:]
     if direction > 0:
         short_pull = (recent.Close.iloc[-1] - recent.High.max()) / atr
-        pullback_depth = max(0.0, -ext_ema_atr)
         reclaim = px >= float(x.ema20)
     elif direction < 0:
         short_pull = (recent.Low.min() - recent.Close.iloc[-1]) / atr
-        pullback_depth = max(0.0, ext_ema_atr)
         reclaim = px <= float(x.ema20)
     else:
         short_pull = 0.0
-        pullback_depth = 0.0
         reclaim = False
 
-    # Candidate = strong medium-term trend, but not already extended in trend direction.
-    # Best zone is roughly -0.75..+0.35 ATR around EMA20 for longs, inverse for shorts.
     if direction > 0:
         location_ok = -0.75 <= ext_ema_atr <= 0.35
         chase_penalty = max(0.0, ext_ema_atr - 0.75)
@@ -185,3 +177,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# CI trigger v4.3
