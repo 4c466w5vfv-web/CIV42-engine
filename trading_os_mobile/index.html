@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0d10" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <title>Trading OS Mobile</title>
+  <style>
+    :root{--bg:#0b0d10;--panel:#14171c;--panel2:#1b2027;--line:#2a313a;--text:#f5f7fa;--muted:#8f99a6;--good:#50d890;--warn:#f0b44c;--bad:#f0626e;--accent:#77a8ff}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+    button,input,select{font:inherit} button{cursor:pointer}
+    .app{max-width:520px;margin:0 auto;padding:16px 14px 88px}.top{display:flex;justify-content:space-between;align-items:center;margin:4px 2px 14px}.brand{font-weight:800;letter-spacing:.2px}.sub{font-size:12px;color:var(--muted)}
+    .hero{background:linear-gradient(180deg,#171b21,#12151a);border:1px solid var(--line);border-radius:22px;padding:18px}.hero-row{display:flex;justify-content:space-between;gap:14px;align-items:end}.eq{font-size:31px;font-weight:800}.state{font-weight:800;padding:8px 12px;border-radius:999px}.state.enter{background:rgba(80,216,144,.14);color:var(--good)}.state.wait{background:rgba(240,180,76,.14);color:var(--warn)}.state.block{background:rgba(240,98,110,.14);color:var(--bad)}
+    .metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:16px}.metric{background:var(--panel2);padding:12px;border-radius:14px}.metric .k{font-size:12px;color:var(--muted)}.metric .v{font-size:20px;font-weight:800;margin-top:4px}
+    .section{margin-top:18px}.section h2{font-size:14px;margin:0 2px 9px;color:#cbd2da}.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:10px}.row{display:flex;justify-content:space-between;gap:12px;align-items:center}.ticker{font-weight:800;font-size:17px}.small{font-size:12px;color:var(--muted)}.rpos{color:var(--good);font-weight:800}.rneg{color:var(--bad);font-weight:800}
+    .bar{height:8px;background:#242a31;border-radius:999px;overflow:hidden;margin-top:8px}.fill{height:100%;background:var(--accent);border-radius:inherit}.fill.warn{background:var(--warn)}.fill.bad{background:var(--bad)}
+    .signal{display:grid;grid-template-columns:1fr auto;gap:8px 12px}.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.chip{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:9px;font-size:12px}.chip.ok{color:var(--good)}.chip.no{color:var(--bad)}
+    .primary{width:100%;border:0;border-radius:14px;padding:14px;background:var(--accent);color:#07111f;font-weight:900;margin-top:12px}.primary:disabled{opacity:.35;cursor:not-allowed}.ghost{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px;background:transparent;color:var(--text);font-weight:700}
+    .tabs{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(520px,100%);display:grid;grid-template-columns:repeat(4,1fr);background:rgba(12,14,17,.96);backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:8px 8px calc(8px + env(safe-area-inset-bottom))}.tab{border:0;background:transparent;color:var(--muted);padding:10px 2px;font-size:12px}.tab.active{color:var(--text);font-weight:800}
+    .screen{display:none}.screen.active{display:block}.journal-item{border-left:3px solid var(--line);padding-left:12px;margin:12px 0}.journal-item.good{border-color:var(--good)}.journal-item.bad{border-color:var(--bad)}
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.slot{padding:11px;border-radius:12px;background:var(--panel2);border:1px solid var(--line);text-align:center}.slot.done{border-color:rgba(80,216,144,.55)}
+    .notice{font-size:12px;line-height:1.5;color:var(--muted);padding:10px 2px}.hidden{display:none}
+  </style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="top"><div><div class="brand">TRADING OS</div><div class="sub">Zero-Typing Mobile v1</div></div><div class="sub" id="clock">—</div></div>
+
+  <main>
+    <section class="screen active" data-screen="home">
+      <div class="hero">
+        <div class="hero-row"><div><div class="sub">EQUITY</div><div class="eq" id="equity">$200,000</div></div><div id="actionState" class="state wait">WAIT</div></div>
+        <div class="metrics">
+          <div class="metric"><div class="k">OPEN RISK</div><div class="v" id="openRisk">0.00%</div></div>
+          <div class="metric"><div class="k">AVAILABLE</div><div class="v" id="availableRisk">1.50%</div></div>
+          <div class="metric"><div class="k">DRAWDOWN</div><div class="v" id="drawdown">0.00%</div></div>
+          <div class="metric"><div class="k">BUFFER</div><div class="v" id="buffer">0.00%</div></div>
+        </div>
+      </div>
+
+      <div class="section"><h2>ACTIVE POSITIONS</h2><div id="positions"></div></div>
+      <div class="section"><h2>PORTFOLIO RISK</h2><div id="riskMap"></div></div>
+      <div class="section"><h2>NEXT SIGNAL</h2><div id="nextSignal"></div></div>
+    </section>
+
+    <section class="screen" data-screen="trade">
+      <div class="card">
+        <div class="row"><div><div class="sub">READY SIGNAL</div><div class="ticker" id="tradeTicker">—</div></div><div id="tradeState" class="state wait">WAIT</div></div>
+        <div class="checks" id="tradeChecks"></div>
+      </div>
+      <div class="card">
+        <div class="sub">TOTAL THESIS RISK</div><div style="font-size:28px;font-weight:900;margin:4px 0 12px" id="tradeRisk">0.75%</div>
+        <div class="grid3">
+          <div class="slot" id="slot1"><div class="small">ENTRY 1</div><strong>40%</strong><div class="small">0.30%</div></div>
+          <div class="slot" id="slot2"><div class="small">ENTRY 2</div><strong>30%</strong><div class="small">0.225%</div></div>
+          <div class="slot" id="slot3"><div class="small">ENTRY 3</div><strong>30%</strong><div class="small">0.225%</div></div>
+        </div>
+        <button class="primary" id="executeSlot" disabled>승인된 1차 진입 기록</button>
+        <button class="ghost" id="simulateNext" style="margin-top:8px">다음 승인 신호 시뮬레이션</button>
+      </div>
+      <div class="notice">실거래 연결 전 프로토타입이다. 총 리스크는 3회 진입 합산 0.75%를 넘지 않으며, 같은 섹터 리스크 캡과 총 오픈 리스크 캡이 우선한다.</div>
+    </section>
+
+    <section class="screen" data-screen="portfolio">
+      <div class="hero"><div class="sub">PORTFOLIO</div><div class="eq" id="portfolioEquity">$200,000</div><div class="metrics"><div class="metric"><div class="k">TOTAL OPEN RISK</div><div class="v" id="portfolioOpen">0%</div></div><div class="metric"><div class="k">RISK CAP</div><div class="v">1.50%</div></div></div></div>
+      <div class="section"><h2>CLUSTERS</h2><div id="clusterList"></div></div>
+      <div class="section"><h2>POSITIONS</h2><div id="portfolioPositions"></div></div>
+    </section>
+
+    <section class="screen" data-screen="journal">
+      <div class="hero"><div class="sub">AUTO JOURNAL</div><div class="metrics"><div class="metric"><div class="k">TRADES</div><div class="v" id="journalCount">0</div></div><div class="metric"><div class="k">RULE COMPLIANCE</div><div class="v" id="compliance">100%</div></div></div></div>
+      <div class="section"><h2>RECENT</h2><div class="card" id="journal"></div></div>
+      <button class="ghost" id="addDemoExit">데모 청산 이벤트 추가</button>
+    </section>
+  </main>
+</div>
+<nav class="tabs">
+  <button class="tab active" data-tab="home">HOME</button><button class="tab" data-tab="trade">TRADE</button><button class="tab" data-tab="portfolio">PORTFOLIO</button><button class="tab" data-tab="journal">JOURNAL</button>
+</nav>
+<script src="./app.js"></script>
+</body>
+</html>
