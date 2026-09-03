@@ -1,0 +1,34 @@
+name: BigView 30m Pullback Scanner v4.3
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [research/mtf-crossasset-v1-3]
+    paths:
+      - 'research/bigview_30m_pullback_scanner_v43.py'
+      - '.github/workflows/bigview-30m-pullback-scanner-v43.yml'
+
+jobs:
+  scan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install pandas numpy yfinance
+      - name: Run BigView 30m scanner
+        shell: bash
+        run: |
+          set -o pipefail
+          python research/bigview_30m_pullback_scanner_v43.py | tee bigview-30m-pullback-scanner-v43.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bigview-30m-pullback-scanner-v43
+          path: |
+            research/results/bigview_30m_pullback_scanner_v43/
+            bigview-30m-pullback-scanner-v43.txt
+          retention-days: 14
