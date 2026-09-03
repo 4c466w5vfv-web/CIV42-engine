@@ -25,6 +25,16 @@ const state = {
   violations:0
 };
 
+const FX_PIP_VALUE_APPROX = {
+  'GBP/USD':10,
+  'EUR/USD':10,
+  'AUD/USD':10,
+  'NZD/USD':10,
+  'USD/JPY':9.1,
+  'USD/CAD':7.4,
+  'USD/CHF':12.5
+};
+
 function money(n){return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(n)}
 function pct(n){return `${n.toFixed(2)}%`}
 function openRisk(){return state.positions.reduce((s,p)=>s+p.openRisk,0)}
@@ -45,6 +55,20 @@ function signalDecision(sig){
   return {status:'ENTER', reason:'risk + setup approved'};
 }
 function setStateBadge(el,status){el.textContent=status;el.className='state '+status.toLowerCase()}
+
+function calcFxPosition(){
+  const bal=Math.max(0,Number(document.getElementById('calcBalance').value)||0);
+  const riskPct=Math.max(0,Number(document.getElementById('calcRisk').value)||0);
+  const stop=Math.max(0,Number(document.getElementById('calcStopPips').value)||0);
+  const pair=document.getElementById('calcPair').value;
+  const pipValue=FX_PIP_VALUE_APPROX[pair]||10;
+  const riskUsd=bal*(riskPct/100);
+  const lots=stop>0 && pipValue>0 ? riskUsd/(stop*pipValue) : 0;
+  document.getElementById('calcLots').textContent=`${lots.toFixed(2)} lots`;
+  document.getElementById('calcRiskUsd').textContent=money(riskUsd);
+  document.getElementById('calcPipValue').textContent=`$${pipValue.toFixed(2)}`;
+}
+
 function render(){
   document.getElementById('clock').textContent=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
   document.getElementById('equity').textContent=money(state.equity);
@@ -81,6 +105,7 @@ function render(){
   document.getElementById('journalCount').textContent=String(state.journal.length);
   document.getElementById('compliance').textContent=`${Math.max(0,100-state.violations*10)}%`;
   document.getElementById('journal').innerHTML=state.journal.slice().reverse().map(j=>`<div class="journal-item ${j.good?'good':'bad'}"><div class="row"><strong>${j.symbol}</strong><strong>${j.result}</strong></div><div class="small">${j.note}</div></div>`).join('')||'<div class="small">아직 기록 없음</div>';
+  calcFxPosition();
 }
 
 document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.screen').forEach(x=>x.classList.toggle('active',x.dataset.screen===btn.dataset.tab))}));
@@ -92,5 +117,7 @@ document.getElementById('executeTrade').addEventListener('click',()=>{
   render();
 });
 document.getElementById('addDemoExit').addEventListener('click',()=>{const p=state.positions.find(x=>x.openRisk>0);if(!p)return;p.openRisk=0;p.protected=true;p.r=2.8;state.equity+=2100;state.peakEquity=Math.max(state.peakEquity,state.equity);state.journal.push({symbol:p.symbol,result:'+2.8R',note:'20EMA partial → 50SMA final · risk recycled',good:true});render()});
+['calcBalance','calcRisk','calcStopPips'].forEach(id=>document.getElementById(id).addEventListener('input',calcFxPosition));
+document.getElementById('calcPair').addEventListener('change',calcFxPosition);
 
 render();setInterval(()=>document.getElementById('clock').textContent=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}),30000);
