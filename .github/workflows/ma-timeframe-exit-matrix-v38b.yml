@@ -1,0 +1,31 @@
+name: MA Timeframe Exit Matrix v3.8b
+
+on:
+  push:
+    branches:
+      - research/mtf-crossasset-v1-3
+    paths:
+      - 'research/ma_timeframe_exit_matrix_v38b.py'
+      - '.github/workflows/ma-timeframe-exit-matrix-v38b.yml'
+  workflow_dispatch:
+
+jobs:
+  backtest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install pandas numpy yfinance
+      - name: Run MA timeframe and exit matrix v3.8b
+        run: set -o pipefail; python research/ma_timeframe_exit_matrix_v38b.py | tee ma-timeframe-exit-matrix-v38b.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ma-timeframe-exit-matrix-v38b-results
+          path: |
+            research/results/ma_timeframe_exit_matrix_v38b/
+            ma-timeframe-exit-matrix-v38b.txt
+          retention-days: 30
