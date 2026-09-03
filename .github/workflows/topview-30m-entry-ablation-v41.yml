@@ -1,0 +1,34 @@
+name: TopView 30m Entry Ablation v4.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [research/mtf-crossasset-v1-3]
+    paths:
+      - 'research/topview_30m_entry_ablation_v41.py'
+      - '.github/workflows/topview-30m-entry-ablation-v41.yml'
+
+jobs:
+  backtest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install pandas numpy yfinance
+      - name: Run 30m entry ablation
+        shell: bash
+        run: |
+          set -o pipefail
+          python research/topview_30m_entry_ablation_v41.py | tee topview-30m-entry-ablation-v41.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: topview-30m-entry-ablation-v41
+          path: |
+            research/results/topview_30m_entry_ablation_v41/
+            topview-30m-entry-ablation-v41.txt
+          retention-days: 30
