@@ -1,0 +1,30 @@
+name: Prop Evaluation Engine v3.5
+
+on:
+  push:
+    branches:
+      - research/mtf-crossasset-v1-3
+    paths:
+      - 'research/prop_evaluation_engine_v35.py'
+      - '.github/workflows/prop-evaluation-v35.yml'
+  workflow_dispatch:
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install pandas numpy yfinance
+      - name: Run prop evaluation v3.5
+        run: python research/prop_evaluation_engine_v35.py | tee prop-evaluation-v35.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prop-evaluation-v35-results
+          path: |
+            research/results/prop_evaluation_v35/
+            prop-evaluation-v35.txt
+          retention-days: 30
