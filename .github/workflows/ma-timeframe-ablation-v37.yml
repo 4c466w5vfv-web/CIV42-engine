@@ -1,0 +1,30 @@
+name: MA Timeframe Ablation v3.7
+
+on:
+  push:
+    branches: [research/mtf-crossasset-v1-3]
+    paths:
+      - 'research/ma_timeframe_ablation_v37.py'
+      - '.github/workflows/ma-timeframe-ablation-v37.yml'
+  workflow_dispatch:
+
+jobs:
+  backtest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install pandas numpy yfinance
+      - name: Run MA timeframe ablation v3.7
+        run: python research/ma_timeframe_ablation_v37.py | tee ma-timeframe-ablation-v37.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ma-timeframe-ablation-v37-results
+          path: |
+            research/results/ma_timeframe_ablation_v37/
+            ma-timeframe-ablation-v37.txt
+          retention-days: 30
