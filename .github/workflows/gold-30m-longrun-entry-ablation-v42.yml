@@ -1,5 +1,6 @@
 name: Gold 30m Long-run Entry Ablation v4.2
 
+# Trigger commit: v4.2 long-run validation
 on:
   workflow_dispatch:
   push:
