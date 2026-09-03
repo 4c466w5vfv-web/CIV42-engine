@@ -1,0 +1,34 @@
+name: Gold 30m Long-run Entry Ablation v4.2
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [research/mtf-crossasset-v1-3]
+    paths:
+      - 'research/gold_30m_longrun_entry_ablation_v42.py'
+      - '.github/workflows/gold-30m-longrun-entry-ablation-v42.yml'
+
+jobs:
+  backtest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install pandas numpy dukascopy-python
+      - name: Run Gold long-run 30m entry ablation
+        shell: bash
+        run: |
+          set -o pipefail
+          python research/gold_30m_longrun_entry_ablation_v42.py | tee gold-30m-longrun-entry-ablation-v42.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gold-30m-longrun-entry-ablation-v42
+          path: |
+            research/results/gold_30m_longrun_entry_ablation_v42/
+            gold-30m-longrun-entry-ablation-v42.txt
+          retention-days: 30
