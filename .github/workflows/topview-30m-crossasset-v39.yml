@@ -1,0 +1,34 @@
+name: TopView 30m Cross-Asset v3.9
+
+on:
+  push:
+    branches:
+      - research/mtf-crossasset-v1-3
+    paths:
+      - 'research/topview_30m_crossasset_v39.py'
+      - '.github/workflows/topview-30m-crossasset-v39.yml'
+  workflow_dispatch:
+
+jobs:
+  backtest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install pandas numpy yfinance
+      - name: Run TopView-style 30m cross-asset backtest
+        shell: bash
+        run: |
+          set -o pipefail
+          python research/topview_30m_crossasset_v39.py | tee topview-30m-crossasset-v39.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: topview-30m-crossasset-v39-results
+          path: |
+            research/results/topview_30m_crossasset_v39/
+            topview-30m-crossasset-v39.txt
+          retention-days: 30
