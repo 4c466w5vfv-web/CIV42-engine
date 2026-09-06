@@ -1,0 +1,25 @@
+name: ARK42 Gold Oil MR Momentum Sample
+
+on:
+  push:
+    branches:
+      - backtest/ndx-trend-pilot
+    paths:
+      - 'research/trading/gold_oil_mr_momentum_sample.py'
+      - 'research/trading/full_cycle_pilot.py'
+      - 'research/trading/full_cycle_pilot_v5.py'
+      - '.github/workflows/gold_oil_mr_momentum_sample.yml'
+  workflow_dispatch:
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pandas
+        run: python -m pip install --disable-pip-version-check pandas
+      - name: Run Gold and Oil sample
+        run: python research/trading/gold_oil_mr_momentum_sample.py
