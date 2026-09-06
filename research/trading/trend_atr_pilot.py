@@ -16,6 +16,7 @@ SMA_LEN = 200
 SLOPE_LOOKBACK = 20
 ATR_LEN = 14
 ATR_MULT = 2.0
+TRADING_DAYS = 252
 
 
 def load_data(url: str) -> pd.DataFrame:
@@ -57,6 +58,91 @@ class Trade:
     exit_reason: str
 
 
+def build_daily_equity(df: pd.DataFrame, tdf: pd.DataFrame, cost_atr_rt: float):
+    """Build a no-overlap daily marked-to-market equity curve from closed trades.
+
+    Position size is fixed at entry so loss to the initial 2ATR stop equals 1% of
+    then-current equity. Round-trip cost is charged on the exit bar. Flat days
+    carry equity forward. Open trades are intentionally excluded to match the
+    closed-trade statistics.
+    """
+    if tdf.empty:
+        return pd.Series(dtype=float)
+
+    work = df[df["datetime"] >= START_DATE][["datetime", "close"]].copy()
+    work = work.set_index("datetime")
+    equity = 1.0
+    curve = pd.Series(index=work.index, dtype=float)
+    curve[:] = equity
+
+    cursor_date = work.index[0]
+    for _, t in tdf.iterrows():
+        entry_date = pd.Timestamp(t["entry_date"])
+        exit_date = pd.Timestamp(t["exit_date"])
+        if entry_date not in work.index or exit_date not in work.index:
+            continue
+
+        # Carry realized equity through flat dates before this trade.
+        flat_mask = (curve.index >= cursor_date) & (curve.index < entry_date)
+        curve.loc[flat_mask] = equity
+
+        entry_equity = equity
+        risk_dollars = entry_equity * RISK_PER_TRADE
+        units = risk_dollars / float(t["initial_risk"])
+        trade_mask = (curve.index >= entry_date) & (curve.index <= exit_date)
+        trade_dates = curve.index[trade_mask]
+
+        for d in trade_dates:
+            if d < exit_date:
+                mark = float(work.loc[d, "close"])
+                curve.loc[d] = entry_equity + units * (mark - float(t["entry"]))
+            else:
+                gross_exit_equity = entry_equity + units * (float(t["exit"]) - float(t["entry"]))
+                cost_dollars = units * cost_atr_rt * float(t["entry_atr"])
+                equity = gross_exit_equity - cost_dollars
+                curve.loc[d] = equity
+
+        cursor_date = exit_date
+
+    # Closed-trade-only convention: after the final closed trade, remain in cash.
+    curve.loc[curve.index > cursor_date] = equity
+    curve = curve.ffill().fillna(1.0)
+    return curve
+
+
+def daily_risk_metrics(curve: pd.Series):
+    if curve.empty or len(curve) < 3:
+        return {
+            "daily_sharpe": None,
+            "daily_sortino": None,
+            "cagr_pct": None,
+            "calmar": None,
+            "daily_mdd_pct": None,
+        }
+
+    returns = curve.pct_change().fillna(0.0)
+    std = float(returns.std(ddof=1))
+    sharpe = float(returns.mean() / std * math.sqrt(TRADING_DAYS)) if std > 0 else None
+
+    downside = returns.clip(upper=0.0)
+    downside_dev = float(math.sqrt((downside.pow(2)).mean()))
+    sortino = float(returns.mean() / downside_dev * math.sqrt(TRADING_DAYS)) if downside_dev > 0 else None
+
+    dd = curve / curve.cummax() - 1.0
+    mdd = float(dd.min())
+    years = max((curve.index[-1] - curve.index[0]).days / 365.25, 1 / 365.25)
+    cagr = float(curve.iloc[-1] ** (1.0 / years) - 1.0)
+    calmar = float(cagr / abs(mdd)) if mdd < 0 else None
+
+    return {
+        "daily_sharpe": sharpe,
+        "daily_sortino": sortino,
+        "cagr_pct": cagr * 100.0,
+        "calmar": calmar,
+        "daily_mdd_pct": mdd * 100.0,
+    }
+
+
 def run_backtest(symbol: str, df: pd.DataFrame):
     df = df.copy()
     df["atr14"] = wilder_atr(df)
@@ -71,9 +157,6 @@ def run_backtest(symbol: str, df: pd.DataFrame):
     active_stop = None
     highest_high = None
     trades = []
-
-    equity = 1.0
-    equity_curve = []
 
     for i in range(1, len(df)):
         row = df.iloc[i]
@@ -112,8 +195,6 @@ def run_backtest(symbol: str, df: pd.DataFrame):
                         exit_reason="2ATR_TRAIL",
                     )
                 )
-                equity *= max(0.0, 1.0 + RISK_PER_TRADE * r)
-                equity_curve.append((date, equity))
                 in_pos = False
                 entry = entry_atr = initial_stop = initial_risk = None
                 entry_i = None
@@ -153,6 +234,8 @@ def run_backtest(symbol: str, df: pd.DataFrame):
         pf = float(wins.sum() / abs(losses.sum())) if len(losses) and abs(losses.sum()) > 0 else math.inf
         eq = (1.0 + RISK_PER_TRADE * net_r).cumprod()
         dd = eq / eq.cummax() - 1.0
+        daily_curve = build_daily_equity(df, tdf, cost_atr_rt)
+        daily = daily_risk_metrics(daily_curve)
         return {
             "trades": int(len(net_r)),
             "win_rate": float((net_r > 0).mean()),
@@ -164,6 +247,7 @@ def run_backtest(symbol: str, df: pd.DataFrame):
             "max_drawdown_pct_at_1pct_risk": float(dd.min() * 100),
             "best_R": float(net_r.max()),
             "worst_R": float(net_r.min()),
+            **daily,
         }
 
     valid = df[(df["datetime"] >= START_DATE) & df["sma200"].notna()].copy()
@@ -202,8 +286,9 @@ def main():
         results.append(res)
 
     print("# SMA200 + 2ATR Trend Pilot")
-    print(f"Rules: prev close > SMA200, 20D SMA200 slope > 0, next-day open entry, Wilder ATR14, 2ATR initial/trailing stop, 1% equity risk per trade, no lookahead stop update.")
+    print("Rules: prev close > SMA200, 20D SMA200 slope > 0, next-day open entry, Wilder ATR14, 2ATR initial/trailing stop, 1% equity risk per trade, no lookahead stop update.")
     print("Data source: simom1/XAUUSD-history TradingView daily datasets. Volume is ignored.")
+    print("Daily Sharpe/Sortino use marked-to-market closed-trade equity, rf=0, annualized by sqrt(252). Open end-of-sample trade is excluded.")
     print()
     for res in results:
         print(f"## {res['symbol']}")
@@ -217,7 +302,9 @@ def main():
                 f"exp={fmt(s.get('expectancy_R'))}R, median={fmt(s.get('median_R'))}R, "
                 f"PF={fmt(s.get('profit_factor'))}, sum={fmt(s.get('sum_R'))}R, "
                 f"eq@1%R={fmt(s.get('equity_return_pct_at_1pct_risk'))}%, "
-                f"MDD@1%R={fmt(s.get('max_drawdown_pct_at_1pct_risk'))}%"
+                f"tradeMDD={fmt(s.get('max_drawdown_pct_at_1pct_risk'))}%, "
+                f"dailySharpe={fmt(s.get('daily_sharpe'))}, dailySortino={fmt(s.get('daily_sortino'))}, "
+                f"dailyMDD={fmt(s.get('daily_mdd_pct'))}%, CAGR={fmt(s.get('cagr_pct'))}%, Calmar={fmt(s.get('calmar'))}"
             )
         if res["open_trade"]:
             ot = res["open_trade"]
