@@ -1,0 +1,20 @@
+name: ARK42 MR VCP Volume Diagnostic v4
+
+on:
+  push:
+    branches:
+      - backtest/ndx-trend-pilot
+  workflow_dispatch:
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pandas
+        run: python -m pip install --disable-pip-version-check pandas
+      - name: Run VCP volume diagnostic
+        run: python research/trading/mr_vcp_volume_diagnostic_v4.py
