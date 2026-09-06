@@ -16,5 +16,5 @@ jobs:
           python-version: '3.12'
       - name: Install pandas
         run: python -m pip install --disable-pip-version-check pandas
-      - name: Run integrated pilot
-        run: python research/trading/full_cycle_pilot.py
+      - name: Run strict v5 A-B pilot
+        run: python research/trading/full_cycle_pilot_v5.py
