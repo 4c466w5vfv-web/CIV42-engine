@@ -4,6 +4,7 @@ from typing import List, Dict, Tuple
 # ARK-42 Long-Only Portfolio Risk Engine v1
 # Hard constraints are intentionally simple and auditable.
 # 4% is a ceiling, never a target.
+# Validation trigger: deterministic risk-control checks only; no performance claim.
 
 TRADE_CAP = 0.005      # 0.50%
 CLUSTER_CAP = 0.015    # 1.50%
