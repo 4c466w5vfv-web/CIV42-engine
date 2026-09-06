@@ -1,0 +1,17 @@
+name: ARK42 Full Cycle Pilot v5
+on:
+  push:
+    branches: [backtest/ndx-trend-pilot]
+  workflow_dispatch:
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check pandas
+      - env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: python research/trading/full_cycle_pilot_v5.py
