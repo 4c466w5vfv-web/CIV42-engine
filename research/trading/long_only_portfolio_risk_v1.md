@@ -11,6 +11,14 @@ Operate only long exposure across two strategy sleeves:
 
 Short strategies remain Research Queue only.
 
+## Initial Index Universe
+Primary index universe for long-only research and execution design:
+- NAS100
+- SPX500
+- US30
+
+All three are treated as one Equity Risk Cluster until empirical dependence analysis justifies a different allocation rule. A valid signal on all three does not create three independent risk bets.
+
 ## Core State Machine
 
 CASH -> MEAN_REVERSION -> LONG_MOMENTUM -> CASH
